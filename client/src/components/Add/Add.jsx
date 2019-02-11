@@ -7,7 +7,7 @@ const Add = () => (
     <form>
       <h2>Name:</h2>
       <input type="text" name="name" placeholder="Enter name" />
-      <h2>Base Expirience:</h2>
+      <h2>Base Experience:</h2>
       <input type="text" name="base_expirience" placeholder="Enter number" />
       <h2>Height:</h2>
       <input type="text" name="height" placeholder="Enter number" />

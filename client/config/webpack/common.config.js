@@ -20,6 +20,11 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.mjs$/,
+        include: /node_modules/,
+        type: "javascript/auto",
+      },
+      {
         test: /\.(js|jsx)$/,
         exclude: [path.resolve(__dirname, '../../node_modules/')],
         use: {

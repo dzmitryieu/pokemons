@@ -2,7 +2,7 @@ import React from 'react';
 
 import styles from './Details.scss';
 
-const Details = ({ details: { base_experience, height, id } }) => {
+const Details = ({ base_experience, height, id } ) => {
   const map = [
     {
       desc: 'Base Experience',
@@ -11,11 +11,7 @@ const Details = ({ details: { base_experience, height, id } }) => {
     {
       desc: 'Height',
       value: height
-    },
-    {
-      desc: 'ID',
-      value: id
-    },
+    }
   ]
 
   return (      
