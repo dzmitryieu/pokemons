@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { graphql } from 'react-apollo';
-import getPokemonsQuery from '../../queries/queries';
+import { getPokemonsQuery } from '../../queries/queries';
 
 import Pokemon from '../Pokemon';
 
