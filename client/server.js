@@ -6,9 +6,9 @@ const config = require('./config/webpack/dev.config.js');
 const app = express();
 
 if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'build')));
+  app.use(express.static(path.join(__dirname, '..', 'public')));
   app.use('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'build', 'index.html'));
+    res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
   });
 } else {
   const webpackDevMiddleware = require('webpack-dev-middleware'); // eslint-disable-line global-require

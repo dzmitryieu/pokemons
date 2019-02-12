@@ -8,11 +8,11 @@ const cssLoader = process.env.NODE_ENV === 'production' ? MiniCssExtractPlugin.l
 module.exports = {
   target: 'web',
   entry: [
-    path.resolve(__dirname, '../../src/index.js'),
+    path.resolve(__dirname, '../../client/src/index.js'),
   ],
   output: {
     publicPath: '/',
-    path: path.resolve(__dirname, '../../build'),
+    path: path.resolve(__dirname, '../../public'),
   },
   resolve: {
     extensions: ['.js', '.jsx'],
@@ -29,6 +29,16 @@ module.exports = {
         exclude: [path.resolve(__dirname, '../../node_modules/')],
         use: {
           loader: 'babel-loader',
+          options: {
+            "presets": [
+              "@babel/preset-env",
+              "@babel/preset-react"
+            ],
+            "plugins": [
+              "react-hot-loader/babel",
+              "@babel/plugin-proposal-class-properties"
+            ]
+          },
         },
       },
       {
@@ -87,7 +97,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, '../../src/index.html'),
+      template: path.resolve(__dirname, '../../client/src/index.html'),
       filename: './index.html',
     }),
     new MiniCssExtractPlugin({
