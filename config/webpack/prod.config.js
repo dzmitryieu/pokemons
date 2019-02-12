@@ -6,7 +6,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const common = require('./common.config.js');
 
 const pathsToClean = [
-  'build',
+  'public',
 ];
 const cleanOptions = {
   root: path.resolve(__dirname, '../../'),
