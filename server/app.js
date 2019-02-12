@@ -1,13 +1,14 @@
 const express = require('express');
-const graphqlHTTP = require('express-graphql');
 const path = require('path');
+const webpack = require('webpack');
+const config = require('../config/webpack/dev.config');
+const graphqlHTTP = require('express-graphql');
 const schema = require('./schema/schema');
 const mongoose = require('mongoose');
 const cors = require('cors');
 
 const app = express();
 
-// allow cross-origin requests
 app.use(cors());
 
 // connect to mlab database
@@ -15,18 +16,42 @@ mongoose.connect('mongodb://viktar:pokemon17@ds155132.mlab.com:55132/pokemon-db'
 mongoose.connection.once('open', () => {
     console.log('conneted to database');
 });
-
-// bind express with graphql
 app.use('/graphql', graphqlHTTP({
     schema,
     graphiql: true
-}));
+  }));
 
-app.use(express.static(path.join(__dirname, '..','public')));
-app.use('/', (req, res) => {
+if (process.env.NODE_ENV === 'production') {  
+  app.use(express.static(path.join(__dirname, '..', 'public')));
+  app.use('*', (req, res) => {
     res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
-});
+  });
+} else {
+  const webpackDevMiddleware = require('webpack-dev-middleware'); // eslint-disable-line global-require
+  const webpackHotMiddleware = require('webpack-hot-middleware'); // eslint-disable-line global-require
+  const compiler = webpack(config);
+  // Tell express to use the webpack-dev-middleware and use the webpack.config.js
+  // configuration file as a base.
+  app.use(webpackDevMiddleware(compiler, {
+    noInfo: true,
+    publicPath: config.output.publicPath,
+  }));
+  app.use(webpackHotMiddleware(compiler));
+  // Serve the files on port 5000.
+
+  app.use('*', (req, res, next) => {
+    const filename = path.join(compiler.outputPath, '/index.html');
+    compiler.outputFileSystem.readFile(filename, (err, result) => {
+      if (err) {
+        return next(err);
+      }
+      res.set('content-type', 'text/html');
+      res.send(result);
+      return res.end();
+    });
+  });
+}
 
 app.listen(process.env.PORT || 4000, () => {
-    console.log('now listening for requests on port 4000');
+  console.log('now listening for requests on port 4000');
 });

@@ -2,6 +2,9 @@ import React from 'react';
 import { hot } from 'react-hot-loader';
 import ApolloClient from 'apollo-boost';
 import { ApolloProvider } from 'react-apollo';
+import { createHttpLink } from "apollo-link-http";
+import { InMemoryCache } from "apollo-cache-inmemory";
+
 
 import Pokedex from '../Pokedex';
 import Manage from '../Manage';
@@ -9,7 +12,8 @@ import Manage from '../Manage';
 import './App.scss';
 
 const client = new ApolloClient({
-  uri: 'http://localhost:4000/graphql'
+  link: createHttpLink({ uri: "/graphql" }),
+  cache: new InMemoryCache()
 });
 
 const App = () => (
