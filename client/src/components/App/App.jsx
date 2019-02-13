@@ -10,6 +10,7 @@ import Pokedex from '../Pokedex';
 import Manage from '../Manage';
 
 import './App.scss';
+import '../../assets/images/favicon.png';
 
 const client = new ApolloClient({
   link: createHttpLink({ uri: "/graphql" }),
