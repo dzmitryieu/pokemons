@@ -13,12 +13,30 @@ const getPokemonsQuery = gql`
 `;
 
 const addPokemonMutation = gql`
-	mutation ($name: String!, $base_experience: Number!, $height: Number!, $image_url: String) {
-		addPokemon (name: $name, base_experience: $base_experience, height: $height, image_url: $image_url) {
+	mutation addPokemon($pokemon: PokemonDetailsInput!) {
+		addPokemon(input: $pokemon) {
 			name,
 			height
 		}
 	}
 `;
 
-export { getPokemonsQuery, addPokemonMutation };
+const changePokemonMutation = gql`
+	mutation changePokemon($pokemonid: PokemonIDInput!) {
+		changePokemon(input: $pokemonid) {
+			name,
+			height
+		}
+	}
+`;
+
+const deletePokemonMutation = gql`
+	mutation deletePokemon($pokemonid: PokemonIDInput!) {
+		deletePokemon(input: $pokemonid) {
+			name,
+			height
+		}
+}
+`;
+
+export { getPokemonsQuery, addPokemonMutation, changePokemonMutation };

@@ -6,7 +6,6 @@ const {
 	GraphQLString,
 	GraphQLSchema,
 	GraphQLID,
-	GraphQLInt,
 	GraphQLList,
 	GraphQLInputObjectType,
 	GraphQLNonNull
@@ -17,8 +16,8 @@ const PokemonType = new GraphQLObjectType({
 	fields: ( ) => ({
 		id: { type: GraphQLID },
 		name: { type: GraphQLString },
-		base_experience: { type: GraphQLInt },
-		height: { type: GraphQLInt },
+		base_experience: { type: GraphQLString },
+		height: { type: GraphQLString },
 		image_url: { type: GraphQLString },
 	})
 });
@@ -46,21 +45,43 @@ const PokemonDetailsInput = new GraphQLInputObjectType({
 	name: 'PokemonDetailsInput',
 	fields: () => ({
 		name: { type: new GraphQLNonNull(GraphQLString) },
-		base_experience: { type: new GraphQLNonNull(GraphQLInt) },
-		height: { type: new GraphQLNonNull(GraphQLInt) }, 
+		base_experience: { type: new GraphQLNonNull(GraphQLString) },
+		height: { type: new GraphQLNonNull(GraphQLString) }, 
+		image_url: { type: GraphQLString }
+	})
+	});
+	
+const PokemonIDInput = new GraphQLInputObjectType({
+	name: 'PokemonIDInput',
+	fields: () => ({
+		id: { type: GraphQLString },
+		name: { type: GraphQLString },
+		base_experience: { type: GraphQLString },
+		height: { type: GraphQLString }, 
 		image_url: { type: GraphQLString }
 	})
   });
   
-  const PokemonDetailsPayload = new GraphQLObjectType({
-    name: 'PokemonDetailsPayload',  
-    fields: () => ({
-			name: { type: new GraphQLNonNull(GraphQLString) },
-			base_experience: { type: new GraphQLNonNull(GraphQLInt) },
-			height: { type: new GraphQLNonNull(GraphQLInt) }, 
-			image_url: { type: GraphQLString }
-    })
-  });
+const PokemonDetailsPayload = new GraphQLObjectType({
+	name: 'PokemonDetailsPayload',  
+	fields: () => ({
+		name: { type: new GraphQLNonNull(GraphQLString) },
+		base_experience: { type: new GraphQLNonNull(GraphQLString) },
+		height: { type: new GraphQLNonNull(GraphQLString) }, 
+		image_url: { type: GraphQLString }
+	})
+});
+
+const PokemonIDPayload = new GraphQLObjectType({
+	name: 'PokemonIDPayload',  
+	fields: () => ({
+		id: { type: new GraphQLNonNull(GraphQLID) },
+		name: { type: GraphQLString },
+		base_experience: { type: GraphQLString },
+		height: { type: GraphQLString }, 
+		image_url: { type: GraphQLString }
+	})
+});
 
 
 const MutationQuery = new GraphQLObjectType({
@@ -81,6 +102,23 @@ const MutationQuery = new GraphQLObjectType({
 					image_url: args.input.image_url
 				});
 				return pokemon.save();
+			}
+		},
+		changePokemon: {
+			name: 'ChangePokemon',
+			description: "Schema change pokemon mutation",
+			type: PokemonIDPayload,
+			args: {
+				input: { type: new GraphQLNonNull(PokemonIDInput) },
+			},
+			resolve(parent, args){
+				Pokemon.findById(args.input.id, (err, doc) => {
+					if(err) return res.send(500, { error: err });
+					for (let key in doc) {
+						doc[key] = args.input[key] || doc[key];
+					};
+					return doc.save();
+				});			
 			}
 		},
 	}
