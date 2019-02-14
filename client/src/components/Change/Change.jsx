@@ -1,6 +1,6 @@
 import React from 'react';
-import { graphql, compose } from 'react-apollo';
-import { getPokemonsQuery, changePokemonMutation, deletePokemonMutation } from '../../queries/queries';
+import { graphql, compose, subscribeToMore, Query } from 'react-apollo';
+import { getPokemonsQuery, changePokemonMutation, deletePokemonMutation, pokemonsChangedSub } from '../../queries/queries';
 
 import styles from './Change.scss';
 
@@ -68,6 +68,10 @@ class Change extends React.Component {
       },
       refetchQueries: () => [{ query: getPokemonsQuery }]
     });
+    console.log('subscribeToMore', subscribeToMore);
+    // this.props.subscribeToMore({
+    //   document: pokemonsChangedSub
+    // });
     this.stateZeroing();
   }
 

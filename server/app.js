@@ -5,7 +5,12 @@ const config = require('../config/webpack/dev.config');
 const graphqlHTTP = require('express-graphql');
 const schema = require('./schema/schema');
 const mongoose = require('mongoose');
+const { createServer } = require('http');
 const cors = require('cors');
+const { execute, subscribe } = require('graphql');
+const { SubscriptionServer } = require('subscriptions-transport-ws');
+
+const PORT = 4000;
 
 const app = express();
 
@@ -52,6 +57,23 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.listen(process.env.PORT || 4000, () => {
-  console.log('now listening for requests on port 4000');
+// We wrap the express server so that we can attach the WebSocket for subscriptions
+const ws = createServer(app);
+
+ws.listen(PORT, () => {
+  console.log(`GraphQL Server is now running on http://localhost:${PORT}`);
+
+  // Set up the WebSocket for handling GraphQL subscriptions
+  new SubscriptionServer({
+    execute,
+    subscribe,
+    schema
+  }, {
+    server: ws,
+    path: '/subscriptions',
+  });
 });
+
+// app.listen(process.env.PORT || 4000, () => {
+//   console.log('now listening for requests on port 4000');
+// });

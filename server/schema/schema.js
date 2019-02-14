@@ -138,7 +138,25 @@ const MutationQuery = new GraphQLObjectType({
 	}
 });
 
+
+const SubscriptionQuery = new GraphQLObjectType({
+	name: 'SubscriptionQueryType',
+	fields: {
+		pokemonsChanged: {
+			type: PokemonType,
+			resolve: () => {
+				return {
+					customData: Pokemon.find({}),
+				}
+			},
+			subscribe: () => pubsub.asyncIterator('pokemonsChanged')
+		}
+	}
+});
+
 module.exports = new GraphQLSchema({
 	query: RootQuery,
 	mutation: MutationQuery,
+	subscription: SubscriptionQuery,
 });
+
