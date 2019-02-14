@@ -54,7 +54,7 @@ const PokemonDetailsInput = new GraphQLInputObjectType({
 const PokemonIDInput = new GraphQLInputObjectType({
 	name: 'PokemonIDInput',
 	fields: () => ({
-		id: { type: GraphQLString },
+		id: { type: new GraphQLNonNull(GraphQLString) },
 		name: { type: GraphQLString },
 		base_experience: { type: GraphQLString },
 		height: { type: GraphQLString }, 
@@ -118,6 +118,20 @@ const MutationQuery = new GraphQLObjectType({
 						doc[key] = args.input[key] || doc[key];
 					};
 					return doc.save();
+				});			
+			}
+		},
+		deletePokemon: {
+			name: 'DeletePokemon',
+			description: "Schema delete pokemon mutation",
+			type: PokemonIDPayload,
+			args: {
+				input: { type: new GraphQLNonNull(PokemonIDInput) },
+			},
+			resolve(parent, args){
+				Pokemon.findById(args.input.id, (err, doc) => {
+					if(err) return res.send(500, { error: err });
+					return doc.remove();
 				});			
 			}
 		},

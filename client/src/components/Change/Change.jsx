@@ -42,32 +42,56 @@ class Change extends React.Component {
     });   
   }
 
+  stateZeroing = () => {
+    this.setState({
+      id: '',
+      name: '',
+      base_experience: '',
+      height: '',
+      image_url: '',
+      isActive: false
+    });
+  }
+
+  changePokemon = () => {
+    const { id, name, base_experience, height, image_url } = this.state;
+    const { changePokemonMutation } = this.props;
+    changePokemonMutation({
+      variables: {
+        pokemonid: {
+          id: id,
+          name: name,
+          base_experience: base_experience,
+          height: height,
+          image_url: image_url
+        }
+      },
+      refetchQueries: () => [{ query: getPokemonsQuery }]
+    });
+    this.stateZeroing();
+  }
+
+  deletePokemon = () => {
+    const { id } = this.state;
+    const { deletePokemonMutation } = this.props;
+    deletePokemonMutation({
+      variables: {
+        pokemonid: {
+          id: id          
+        }
+      },
+      refetchQueries: () => [{ query: getPokemonsQuery }]
+    });
+    this.stateZeroing();
+  }
+
 
   onSubmitFormHandler = (e) => {
     e.preventDefault();
-    const { id, name, base_experience, height, image_url } = this.state;
-    const { changePokemonMutation } = this.props;
     if (e.target.name === 'change') {
-      changePokemonMutation({
-        variables: {
-          pokemonid: {
-            id: id,
-            name: name,
-            base_experience: base_experience,
-            height: height,
-            image_url: image_url
-          }
-        },
-        refetchQueries: () => [{ query: getPokemonsQuery }]
-      });
-      this.setState({
-        id: '',
-        name: '',
-        base_experience: '',
-        height: '',
-        image_url: '',
-        isActive: false
-      });
+      this.changePokemon();
+    } else {
+      this.deletePokemon();
     }
   }
 
@@ -120,5 +144,7 @@ class Change extends React.Component {
 }
 
 export default compose(
-  graphql(getPokemonsQuery),graphql(changePokemonMutation, { name: "changePokemonMutation" })
+  graphql(getPokemonsQuery),
+  graphql(changePokemonMutation, { name: "changePokemonMutation" }),
+  graphql(deletePokemonMutation, { name: "deletePokemonMutation" })
 )(Change);
