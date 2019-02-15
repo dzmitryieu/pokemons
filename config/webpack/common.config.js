@@ -8,6 +8,7 @@ const cssLoader = process.env.NODE_ENV === 'production' ? MiniCssExtractPlugin.l
 module.exports = {
   target: 'web',
   entry: [
+    '@babel/polyfill',
     path.resolve(__dirname, '../../client/src/index.js'),
   ],
   output: {

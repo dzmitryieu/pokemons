@@ -1,5 +1,8 @@
 const graphql = require('graphql');
 const Pokemon = require('../models/pokemon');
+const { PubSub } = require('apollo-server');
+
+const pubsub = new PubSub();
 
 const {
 	GraphQLObjectType,
@@ -10,6 +13,8 @@ const {
 	GraphQLInputObjectType,
 	GraphQLNonNull
 } = graphql;
+
+const POKEMONS_CHANGED = 'POKEMONS_CHANGED';
 
 const PokemonType = new GraphQLObjectType({
 	name: 'Pokemon',
@@ -101,6 +106,7 @@ const MutationQuery = new GraphQLObjectType({
 					height: args.input.height,
 					image_url: args.input.image_url
 				});
+				pubsub.publish(POKEMONS_CHANGED, { pokemons: pokemon });
 				return pokemon.save();
 			}
 		},
@@ -117,6 +123,7 @@ const MutationQuery = new GraphQLObjectType({
 					for (let key in doc) {
 						doc[key] = args.input[key] || doc[key];
 					};
+					pubsub.publish(POKEMONS_CHANGED, { pokemons: doc });
 					return doc.save();
 				});			
 			}
@@ -131,6 +138,7 @@ const MutationQuery = new GraphQLObjectType({
 			resolve(parent, args){
 				Pokemon.findById(args.input.id, (err, doc) => {
 					if(err) return res.send(500, { error: err });
+					pubsub.publish(POKEMONS_CHANGED, { pokemons: doc });
 					return doc.remove();
 				});			
 			}
@@ -142,15 +150,14 @@ const MutationQuery = new GraphQLObjectType({
 const SubscriptionQuery = new GraphQLObjectType({
 	name: 'SubscriptionQueryType',
 	fields: {
-		pokemonsChanged: {
-			type: PokemonType,
+		pokemons: {
+			name: 'pokemons',
+			type: new GraphQLList(PokemonType),
 			resolve: () => {
-				return {
-					customData: Pokemon.find({}),
-				}
+				return Pokemon.find({});
 			},
-			subscribe: () => pubsub.asyncIterator('pokemonsChanged')
-		}
+			subscribe: () => pubsub.asyncIterator(POKEMONS_CHANGED)
+		},
 	}
 });
 

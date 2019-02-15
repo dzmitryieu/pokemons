@@ -39,11 +39,16 @@ const deletePokemonMutation = gql`
 }
 `;
 
-const pokemonsChangedSub = gql`
-	subscription pokemonsChanged {		
-			name,
+const pokemonChangedSub = gql`
+	subscription {		
+		pokemons{
+			id
+			name
+			base_experience
 			height
+			image_url
+		}
 }
 `;
 
-export { getPokemonsQuery, addPokemonMutation, changePokemonMutation, deletePokemonMutation, pokemonsChangedSub };
+export { getPokemonsQuery, addPokemonMutation, changePokemonMutation, deletePokemonMutation, pokemonChangedSub };

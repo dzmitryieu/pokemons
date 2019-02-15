@@ -1,6 +1,6 @@
 import React from 'react';
-import { graphql, compose, subscribeToMore, Query } from 'react-apollo';
-import { getPokemonsQuery, changePokemonMutation, deletePokemonMutation, pokemonsChangedSub } from '../../queries/queries';
+import { graphql, compose, subscribeToMore } from 'react-apollo';
+import { getPokemonsQuery, changePokemonMutation, deletePokemonMutation } from '../../queries/queries';
 
 import styles from './Change.scss';
 
@@ -66,12 +66,8 @@ class Change extends React.Component {
           image_url: image_url
         }
       },
-      refetchQueries: () => [{ query: getPokemonsQuery }]
     });
-    console.log('subscribeToMore', subscribeToMore);
-    // this.props.subscribeToMore({
-    //   document: pokemonsChangedSub
-    // });
+
     this.stateZeroing();
   }
 
@@ -84,7 +80,6 @@ class Change extends React.Component {
           id: id          
         }
       },
-      refetchQueries: () => [{ query: getPokemonsQuery }]
     });
     this.stateZeroing();
   }
@@ -104,7 +99,7 @@ class Change extends React.Component {
     const { name, base_experience, height, image_url, isClicked, isActive, id } = this.state;
     return (
       <div className={styles.wrapper}>
-        <form onSubmit={this.onSubmitFormHandler}>
+        <form>
           <h2>Choose Pokemon:</h2>
           <li className={styles.list_wrapper}>
             <button
